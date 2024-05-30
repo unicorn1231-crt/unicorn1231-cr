@@ -6,19 +6,25 @@ body {
     padding: 0;
     display: flex;
     height: 100vh;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    width: 100%;
 }
 
 .sidebar {
-    width: 200px;
-    background: #333;
+    width: 250px;
+    background: #282828;
     padding: 20px;
-    color: white;
-    height: 100%;
-    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar h2 {
-    text-align: center;
+    margin: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
 }
 
 .sidebar ul {
@@ -26,36 +32,31 @@ body {
     padding: 0;
 }
 
-.sidebar li {
-    margin: 10px 0;
+.sidebar ul li {
+    margin-bottom: 10px;
     cursor: pointer;
-}
-
-.sidebar li:hover {
-    background: #555;
-    padding: 5px;
+    padding: 10px;
+    background: #333;
     border-radius: 4px;
 }
 
-.container {
-    flex: 1;
-    background: #282828;
-    padding: 20px;
-    color: white;
-    overflow-y: auto;
+.sidebar ul li:hover {
+    background: #444;
 }
 
-h1 {
-    text-align: center;
+main {
+    flex: 1;
+    padding: 20px;
 }
 
 .task-input {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
-.task-input input, .task-input textarea {
+.task-input input, .task-input textarea, .task-input select {
     width: 100%;
     padding: 10px;
     border: 1px solid #555;
@@ -78,11 +79,7 @@ h1 {
     background-color: #0056b3;
 }
 
-.task-list {
-    margin-top: 20px;
-}
-
-.task {
+.task-list .task {
     background: #333;
     padding: 15px;
     margin-bottom: 10px;
@@ -102,19 +99,20 @@ h1 {
     color: #aaa;
 }
 
-.task .actions {
+.task-meta {
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 
-.task .actions button {
+.status {
     padding: 5px 10px;
-    border: none;
     border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.status-not-started {
+.status-stuck {
     background-color: #d9534f;
     color: white;
 }
@@ -128,3 +126,36 @@ h1 {
     background-color: #5cb85c;
     color: white;
 }
+
+.date {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.github-commit {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.priority {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.priority-low {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.priority-medium {
+    background-color: #f0ad4e;
+    color: white;
+}
+
+.priority-high {
+    background-color: #d9534f;
+    color: white;
+}
+
