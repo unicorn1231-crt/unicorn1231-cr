@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion-like Task Manager</title>
+    <title>Project Management App</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="scripts.js"></script>
-    <!-- Firebase SDKs -->
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
 </head>
 <body>
-    <div class="sidebar" id="sidebar"></div>
-    <div class="container">
-        <h1>Task Manager</h1>
-        <div class="task-input">
-            <input type="text" id="task-title" placeholder="Task Title">
-            <textarea id="task-description" placeholder="Task Description"></textarea>
-            <button id="add-task">Add Task</button>
-        </div>
-        <div class="task-list" id="task-list"></div>
-    </div>
+    <div id="root"></div>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel" src="index.js"></script>
 </body>
 </html>
+
