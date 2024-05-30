@@ -16,20 +16,22 @@ const db = firebase.firestore();
 document.addEventListener('DOMContentLoaded', () => {
     const taskTitleInput = document.getElementById('task-title');
     const taskDescriptionInput = document.getElementById('task-description');
+    const taskDeadlineInput = document.getElementById('task-deadline');
+    const taskPriorityInput = document.getElementById('task-priority');
     const addTaskButton = document.getElementById('add-task');
     const taskList = document.getElementById('task-list');
-    const sidebar = document.getElementById('sidebar');
+    const taskSidebar = document.getElementById('task-sidebar');
 
     const loadTasks = async () => {
         const tasksSnapshot = await db.collection('tasks').get();
         tasksSnapshot.forEach(doc => {
             const taskData = doc.data();
-            addTaskToDOM(doc.id, taskData.title, taskData.description, taskData.status, taskData.date, taskData.githubCommit);
-            addTaskToSidebar(doc.id, taskData.title, taskData.status);
+            addTaskToDOM(doc.id, taskData.title, taskData.description, taskData.status, taskData.date, taskData.githubCommit, taskData.deadline, taskData.priority, taskData.elapsedTime);
+            addTaskToSidebar(doc.id, taskData.title);
         });
     };
 
-    const addTaskToDOM = (id, title, description, status = 'not-started', date = '', githubCommit = '') => {
+    const addTaskToDOM = (id, title, description, status = 'not-started', date = '', githubCommit = '', deadline = '', priority = 'low', elapsedTime = 0) => {
         const task = document.createElement('div');
         task.classList.add('task');
         task.setAttribute('data-id', id);
@@ -43,63 +45,94 @@ document.addEventListener('DOMContentLoaded', () => {
         taskContent.appendChild(taskDescription);
 
         const taskMeta = document.createElement('div');
+        taskMeta.classList.add('task-meta');
         const taskStatus = document.createElement('span');
         taskStatus.classList.add('status', `status-${status}`);
-        taskStatus.textContent = status.replace(/-/g, ' ');
+        taskStatus.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        taskStatus.addEventListener('click', () => changeTaskStatus(id, taskStatus));
+        const taskDate = document.createElement('span');
+        taskDate.classList.add('date');
+        taskDate.textContent = date;
+        const taskDeadline = document.createElement('span');
+        taskDeadline.classList.add('date');
+        taskDeadline.textContent = `Deadline: ${deadline}`;
+        const taskPriority = document.createElement('span');
+        taskPriority.classList.add('priority', `priority-${priority}`);
+        taskPriority.textContent = priority.charAt(0).toUpperCase() + priority.slice(1);
+        const taskElapsedTime = document.createElement('span');
+        taskElapsedTime.classList.add('elapsed-time');
+        taskElapsedTime.textContent = `Elapsed Time: ${elapsedTime} mins`;
+        const taskGitHubCommit = document.createElement('a');
+        taskGitHubCommit.classList.add('github-commit');
+        taskGitHubCommit.href = githubCommit;
+        taskGitHubCommit.textContent = githubCommit;
         taskMeta.appendChild(taskStatus);
-
-        const taskActions = document.createElement('div');
-        taskActions.classList.add('actions');
-        const notStartedButton = document.createElement('button');
-        notStartedButton.classList.add('status-not-started');
-        notStartedButton.textContent = '未着手';
-        notStartedButton.onclick = () => updateTaskStatus(id, 'not-started');
-        const inProgressButton = document.createElement('button');
-        inProgressButton.classList.add('status-in-progress');
-        inProgressButton.textContent = '実行中';
-        inProgressButton.onclick = () => updateTaskStatus(id, 'in-progress');
-        const doneButton = document.createElement('button');
-        doneButton.classList.add('status-done');
-        doneButton.textContent = '完了';
-        doneButton.onclick = () => updateTaskStatus(id, 'done');
-
-        taskActions.appendChild(notStartedButton);
-        taskActions.appendChild(inProgressButton);
-        taskActions.appendChild(doneButton);
-        taskMeta.appendChild(taskActions);
+        taskMeta.appendChild(taskDate);
+        taskMeta.appendChild(taskDeadline);
+        taskMeta.appendChild(taskPriority);
+        taskMeta.appendChild(taskElapsedTime);
+        taskMeta.appendChild(taskGitHubCommit);
 
         task.appendChild(taskContent);
         task.appendChild(taskMeta);
         taskList.appendChild(task);
+
+        if (status === 'in-progress') {
+            startElapsedTimeUpdate(id, taskElapsedTime);
+        }
     };
 
-    const addTaskToSidebar = (id, title, status) => {
+    const addTaskToSidebar = (id, title) => {
         const taskItem = document.createElement('li');
         taskItem.textContent = title;
-        taskItem.onclick = () => scrollToTask(id);
-        sidebar.appendChild(taskItem);
-    };
-
-    const scrollToTask = (id) => {
-        const taskElement = document.querySelector(`.task[data-id="${id}"]`);
-        if (taskElement) {
+        taskItem.addEventListener('click', () => {
+            const taskElement = document.querySelector(`.task[data-id='${id}']`);
             taskElement.scrollIntoView({ behavior: 'smooth' });
+        });
+        taskSidebar.appendChild(taskItem);
+    };
+
+    const changeTaskStatus = async (id, taskStatusElement) => {
+        const statuses = ['not-started', 'in-progress', 'done'];
+        let currentStatusIndex = statuses.indexOf(taskStatusElement.textContent.toLowerCase().replace(/\s+/g, '-'));
+        currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
+        const newStatus = statuses[currentStatusIndex];
+
+        await db.collection('tasks').doc(id).update({ status: newStatus });
+
+        taskStatusElement.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('-', ' ');
+        taskStatusElement.className = `status status-${newStatus}`;
+
+        const taskElement = document.querySelector(`.task[data-id='${id}'] .elapsed-time`);
+        if (newStatus === 'in-progress') {
+            startElapsedTimeUpdate(id, taskElement);
+        } else {
+            stopElapsedTimeUpdate(id);
         }
     };
 
-    const updateTaskStatus = async (id, status) => {
-        await db.collection('tasks').doc(id).update({ status });
-        const taskElement = document.querySelector(`.task[data-id="${id}"]`);
-        if (taskElement) {
-            const statusElement = taskElement.querySelector('.status');
-            statusElement.className = `status status-${status}`;
-            statusElement.textContent = status.replace(/-/g, ' ');
-        }
+    const startElapsedTimeUpdate = (id, taskElapsedTimeElement) => {
+        const updateInterval = setInterval(async () => {
+            const taskDoc = await db.collection('tasks').doc(id).get();
+            const taskData = taskDoc.data();
+            const newElapsedTime = taskData.elapsedTime + 1;
+            await db.collection('tasks').doc(id).update({ elapsedTime: newElapsedTime });
+            taskElapsedTimeElement.textContent = `Elapsed Time: ${newElapsedTime} mins`;
+        }, 60000); // 1分ごとに更新
+
+        elapsedTimeIntervals[id] = updateInterval;
+    };
+
+    const stopElapsedTimeUpdate = (id) => {
+        clearInterval(elapsedTimeIntervals[id]);
+        delete elapsedTimeIntervals[id];
     };
 
     addTaskButton.addEventListener('click', async () => {
         const title = taskTitleInput.value;
         const description = taskDescriptionInput.value;
+        const deadline = taskDeadlineInput.value;
+        const priority = taskPriorityInput.value;
 
         if (title && description) {
             const newTask = {
@@ -107,18 +140,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: description,
                 status: 'not-started',
                 date: new Date().toLocaleDateString(),
-                githubCommit: ''
+                githubCommit: '',
+                deadline: deadline,
+                priority: priority,
+                elapsedTime: 0
             };
             const docRef = await db.collection('tasks').add(newTask);
 
-            addTaskToDOM(docRef.id, title, description, newTask.status, newTask.date, newTask.githubCommit);
-            addTaskToSidebar(docRef.id, title, newTask.status);
+            addTaskToDOM(docRef.id, title, description, newTask.status, newTask.date, newTask.githubCommit, newTask.deadline, newTask.priority, newTask.elapsedTime);
+            addTaskToSidebar(docRef.id, title);
             taskTitleInput.value = '';
             taskDescriptionInput.value = '';
+            taskDeadlineInput.value = '';
+            taskPriorityInput.value = 'low';
         }
     });
 
-    sidebar.innerHTML = '<h2>Tasks</h2><ul></ul>';
     loadTasks();
 });
+
 
