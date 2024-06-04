@@ -1,39 +1,20 @@
 // DOMがロードされた後にイベントリスナーを設定する
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('login-btn').addEventListener('click', login);
-    document.getElementById('signup-btn').addEventListener('click', signup);
+    document.getElementById('google-login-btn').addEventListener('click', googleLogin);
 });
 
 let currentProject = null;
 
-// ログイン処理
-function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
+// Googleアカウントでのログイン
+function googleLogin() {
+    auth.signInWithPopup(provider)
+        .then(result => {
             document.getElementById('auth').style.display = 'none';
             document.getElementById('task-manager').style.display = 'flex';
             loadProjects();
         })
         .catch(error => {
-            console.error("Error logging in: ", error);
-            alert(error.message);
-        });
-}
-
-// サインアップ処理
-function signup() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('task-manager').style.display = 'flex';
-            loadProjects();
-        })
-        .catch(error => {
-            console.error("Error signing up: ", error);
+            console.error("Error logging in with Google: ", error);
             alert(error.message);
         });
 }
@@ -121,3 +102,4 @@ function changeStatus(taskId, currentStatus) {
         loadTasks();
     });
 }
+
