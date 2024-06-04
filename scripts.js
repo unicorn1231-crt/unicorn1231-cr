@@ -5,13 +5,14 @@ function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
+        .then(userCredential => {
             document.getElementById('auth').style.display = 'none';
             document.getElementById('task-manager').style.display = 'flex';
             loadProjects();
         })
         .catch(error => {
             console.error("Error logging in: ", error);
+            alert(error.message);
         });
 }
 
@@ -20,15 +21,17 @@ function signup() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
+        .then(userCredential => {
             document.getElementById('auth').style.display = 'none';
             document.getElementById('task-manager').style.display = 'flex';
             loadProjects();
         })
         .catch(error => {
             console.error("Error signing up: ", error);
+            alert(error.message);
         });
 }
+
 
 // プロジェクトの読み込み
 function loadProjects() {
