@@ -1,3 +1,9 @@
+// DOMがロードされた後にイベントリスナーを設定する
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('login-btn').addEventListener('click', login);
+    document.getElementById('signup-btn').addEventListener('click', signup);
+});
+
 let currentProject = null;
 
 // ログイン処理
@@ -31,7 +37,6 @@ function signup() {
             alert(error.message);
         });
 }
-
 
 // プロジェクトの読み込み
 function loadProjects() {
@@ -116,4 +121,3 @@ function changeStatus(taskId, currentStatus) {
         loadTasks();
     });
 }
-
