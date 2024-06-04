@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let currentProject = null;
 
-// Googleアカウントでのログイン
 function googleLogin() {
     auth.signInWithPopup(provider)
         .then(result => {
@@ -18,7 +17,6 @@ function googleLogin() {
         });
 }
 
-// プロジェクトの読み込み
 function loadProjects() {
     const projectList = document.getElementById('project-list');
     projectList.innerHTML = '';
@@ -32,7 +30,6 @@ function loadProjects() {
     });
 }
 
-// プロジェクトの追加
 function addProject() {
     const newProject = document.getElementById('new-project').value;
     db.ref('projects').push({
@@ -42,14 +39,12 @@ function addProject() {
     });
 }
 
-// プロジェクトの選択
 function selectProject(projectId) {
     currentProject = projectId;
     document.getElementById('project-title').textContent = 'プロジェクト: ' + projectId;
     loadTasks();
 }
 
-// タスクの読み込み
 function loadTasks() {
     const notStartedTasks = document.getElementById('not-started-tasks');
     const inProgressTasks = document.getElementById('in-progress-tasks');
@@ -74,7 +69,6 @@ function loadTasks() {
     });
 }
 
-// タスクの追加
 function addTask() {
     const newTask = document.getElementById('new-task').value;
     db.ref(`projects/${currentProject}/tasks`).push({
@@ -85,7 +79,6 @@ function addTask() {
     });
 }
 
-// タスクのステータス変更
 function changeStatus(taskId, currentStatus) {
     let newStatus;
     if (currentStatus === 'Not Started') {
