@@ -9,6 +9,12 @@ const firebaseConfig = {
   measurementId: "G-97GNLFRSF4"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Firebaseの初期化
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+} else {
+    firebase.app();
+}
+
 const auth = firebase.auth();
 const db = firebase.database();
