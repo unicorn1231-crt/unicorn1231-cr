@@ -1,11 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // ボタンが正しいIDであるか確認
-    const googleLoginBtn = document.getElementById('google-login-btn');
-    if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', googleLogin);
-    } else {
-        console.error('Googleログインボタンが見つかりません');
-    }
+    document.getElementById('google-login-btn').addEventListener('click', googleLogin);
 });
 
 let currentProject = null;
@@ -107,3 +101,4 @@ function changeStatus(taskId, currentStatus) {
         loadTasks();
     });
 }
+
