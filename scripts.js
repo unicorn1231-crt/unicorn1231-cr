@@ -1,6 +1,11 @@
-// DOMがロードされた後にイベントリスナーを設定する
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('google-login-btn').addEventListener('click', googleLogin);
+    // ボタンが正しいIDであるか確認
+    const googleLoginBtn = document.getElementById('google-login-btn');
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', googleLogin);
+    } else {
+        console.error('Googleログインボタンが見つかりません');
+    }
 });
 
 let currentProject = null;
@@ -102,4 +107,3 @@ function changeStatus(taskId, currentStatus) {
         loadTasks();
     });
 }
-
