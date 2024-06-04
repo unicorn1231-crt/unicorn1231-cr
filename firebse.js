@@ -1,12 +1,12 @@
 // Firebaseの設定を初期化
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    databaseURL: "YOUR_DATABASE_URL"
+  apiKey: "AIzaSyBo1mKX9t72bDKyCWvI8oQ8K_G9kcWkdMw",
+  authDomain: "visions-60dd7.firebaseapp.com",
+  projectId: "visions-60dd7",
+  storageBucket: "visions-60dd7.appspot.com",
+  messagingSenderId: "852217132081",
+  appId: "1:852217132081:web:b863f89dc7a5814bba9110",
+  measurementId: "G-97GNLFRSF4"
 };
 
 firebase.initializeApp(firebaseConfig);
