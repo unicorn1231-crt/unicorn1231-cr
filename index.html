@@ -1,38 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion-like Task Manager</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="scripts.js"></script>
-    <!-- Firebase SDKs -->
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <title>タスク管理アプリ</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <aside class="sidebar">
-            <h2>Tasks</h2>
-            <ul id="task-sidebar">
-                <!-- タスクがここに表示される -->
-            </ul>
-        </aside>
-        <main>
-            <h1>Task Manager</h1>
-            <div class="task-input">
-                <input type="text" id="task-title" placeholder="Task Title">
-                <textarea id="task-description" placeholder="Task Description"></textarea>
-                <input type="date" id="task-deadline" placeholder="Deadline">
-                <select id="task-priority">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
-                <button id="add-task">Add Task</button>
+    <div id="app">
+        <div id="auth">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">ログイン</button>
+            <button onclick="signup()">サインアップ</button>
+        </div>
+        <div id="task-manager" style="display: none;">
+            <div id="sidebar">
+                <h2>プロジェクト</h2>
+                <ul id="project-list"></ul>
+                <input type="text" id="new-project" placeholder="新しいプロジェクト">
+                <button onclick="addProject()">プロジェクト追加</button>
             </div>
-            <div class="task-list" id="task-list"></div>
-        </main>
+            <div id="main">
+                <h2 id="project-title">プロジェクトを選択してください</h2>
+                <div id="task-sections">
+                    <div class="task-section">
+                        <h3>未着手</h3>
+                        <ul id="not-started-tasks"></ul>
+                    </div>
+                    <div class="task-section">
+                        <h3>実行中</h3>
+                        <ul id="in-progress-tasks"></ul>
+                    </div>
+                    <div class="task-section">
+                        <h3>完了</h3>
+                        <ul id="completed-tasks"></ul>
+                    </div>
+                </div>
+                <input type="text" id="new-task" placeholder="新しいタスク">
+                <button onclick="addTask()">タスク追加</button>
+            </div>
+        </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="firebase.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
