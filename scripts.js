@@ -1,41 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('login-btn').addEventListener('click', login);
-    document.getElementById('signup-btn').addEventListener('click', signup);
+    loadProjects();
 });
 
 let currentProject = null;
-
-// ログイン処理
-function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('task-manager').style.display = 'flex';
-            loadProjects();
-        })
-        .catch(error => {
-            console.error("Error logging in: ", error);
-            alert(error.message);
-        });
-}
-
-// サインアップ処理
-function signup() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('task-manager').style.display = 'flex';
-            loadProjects();
-        })
-        .catch(error => {
-            console.error("Error signing up: ", error);
-            alert(error.message);
-        });
-}
 
 // プロジェクトの読み込み
 function loadProjects() {
@@ -120,4 +87,3 @@ function changeStatus(taskId, currentStatus) {
         loadTasks();
     });
 }
-
