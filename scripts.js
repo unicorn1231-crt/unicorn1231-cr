@@ -1,22 +1,43 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('google-login-btn').addEventListener('click', googleLogin);
+    document.getElementById('login-btn').addEventListener('click', login);
+    document.getElementById('signup-btn').addEventListener('click', signup);
 });
 
 let currentProject = null;
 
-function googleLogin() {
-    auth.signInWithPopup(provider)
-        .then(result => {
+// ログイン処理
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
             document.getElementById('auth').style.display = 'none';
             document.getElementById('task-manager').style.display = 'flex';
             loadProjects();
         })
         .catch(error => {
-            console.error("Error logging in with Google: ", error);
+            console.error("Error logging in: ", error);
             alert(error.message);
         });
 }
 
+// サインアップ処理
+function signup() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            document.getElementById('auth').style.display = 'none';
+            document.getElementById('task-manager').style.display = 'flex';
+            loadProjects();
+        })
+        .catch(error => {
+            console.error("Error signing up: ", error);
+            alert(error.message);
+        });
+}
+
+// プロジェクトの読み込み
 function loadProjects() {
     const projectList = document.getElementById('project-list');
     projectList.innerHTML = '';
@@ -30,6 +51,7 @@ function loadProjects() {
     });
 }
 
+// プロジェクトの追加
 function addProject() {
     const newProject = document.getElementById('new-project').value;
     db.ref('projects').push({
@@ -39,12 +61,14 @@ function addProject() {
     });
 }
 
+// プロジェクトの選択
 function selectProject(projectId) {
     currentProject = projectId;
     document.getElementById('project-title').textContent = 'プロジェクト: ' + projectId;
     loadTasks();
 }
 
+// タスクの読み込み
 function loadTasks() {
     const notStartedTasks = document.getElementById('not-started-tasks');
     const inProgressTasks = document.getElementById('in-progress-tasks');
@@ -69,6 +93,7 @@ function loadTasks() {
     });
 }
 
+// タスクの追加
 function addTask() {
     const newTask = document.getElementById('new-task').value;
     db.ref(`projects/${currentProject}/tasks`).push({
@@ -79,6 +104,7 @@ function addTask() {
     });
 }
 
+// タスクのステータス変更
 function changeStatus(taskId, currentStatus) {
     let newStatus;
     if (currentStatus === 'Not Started') {
